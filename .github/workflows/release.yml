@@ -65,5 +65,5 @@ jobs:
           ${{ steps.changelog.outputs.CHANGELOG }}
           ENDBODY
           )
-
-          echo "$body" | hub release create --draft "${assets[@]}" -F "-" "$tag_name"
+          tag_name="${{ env.VERSION }}"
+          echo "$body" | hub release create --draft -F "-" "$tag_name"
