@@ -36,8 +36,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: geertvdc/setup-hub@master
-
       # ==============================
       #       Create release draft
       # ==============================
@@ -68,4 +66,4 @@ jobs:
           ENDBODY
           )
           tag_name="${{ env.VERSION }}"
-          echo "$body" | hub release create --draft -F "-" "$tag_name"
+          echo "$body" | gh release create --draft -F "-" "$tag_name"
