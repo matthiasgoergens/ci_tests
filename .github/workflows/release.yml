@@ -42,9 +42,9 @@ jobs:
       - name: Generate full changelog
         id: changelog
         run: |
-          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
-          git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 ${{ env.VERSION }}^)..${{ env.VERSION }} >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "CHANGELOG<<EOF" | tee --append $GITHUB_OUTPUT
+          git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 ${{ env.VERSION }}^)..${{ env.VERSION }} | tee --append $GITHUB_OUTPUT
+          echo "EOF" | tee --append $GITHUB_OUTPUT
 
       - name: Create Release Draft
         env:
