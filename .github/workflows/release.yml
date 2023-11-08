@@ -56,7 +56,7 @@ jobs:
         # The formatting here is borrowed from OpenEthereum: https://github.com/openethereum/openethereum/blob/main/.github/workflows/build.yml
         run: |
           tag_name="${{ env.VERSION }}"
-          gh release create --draft --notes-file - "$tag_name" << "ENDBODY"
+          gh release create --verify-tag --draft --notes-file - "$tag_name" << "ENDBODY"
           <Release Name, Version and Time>
 
           ## Summary
