@@ -11,25 +11,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  extract-version:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Extract version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" | tee --append "$GITHUB_OUTPUT"
-        id: extract_version
-    outputs:
-      VERSION: ${{ steps.extract_version.outputs.VERSION }}
-
   draft-release:
     name: draft release
-    needs: extract-version
     runs-on: ubuntu-latest
-    env:
-      VERSION: ${{ needs.extract-version.outputs.VERSION }}
     permissions:
       # Required to post the release
       contents: write
     steps:
+      - name: Extract version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" | tee --append "$GITHUB_ENV"
       # This is necessary for generating the changelog. It has to come before "Download Artifacts" or else it deletes the artifacts.
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -44,7 +34,7 @@ jobs:
         run: |
           tee --append "$GITHUB_OUTPUT" << ENDBODY
           CHANGELOG<<EOF
-          $(git log --pretty=tformat:"- %s" $(git describe --tags --abbrev=0 ${{ env.VERSION }}^)..${{ env.VERSION }})
+          $(git log --pretty=tformat:"- %s" $(git describe --tags --abbrev=0 ${RELEASE_VERSION}^)..${RELEASE_VERSION})
           EOF
           ENDBODY
 
@@ -55,7 +45,7 @@ jobs:
 
         # The formatting here is borrowed from OpenEthereum: https://github.com/openethereum/openethereum/blob/main/.github/workflows/build.yml
         run: |
-          tag_name="${{ env.VERSION }}"
+          tag_name="${RELEASE_VERSION}"
           gh release create --verify-tag --draft --notes-file - "$tag_name" << "ENDBODY"
           <Release Name, Version and Time>
 
