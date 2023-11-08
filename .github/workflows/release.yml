@@ -42,10 +42,10 @@ jobs:
       - name: Generate full changelog
         id: changelog
         run: |
-          tee --append "$GITHUB_OUTPUT" <<- ENDBODY
-            CHANGELOG<<EOF
-            $(git log --pretty=tformat:"- %s" $(git describe --tags --abbrev=0 ${{ env.VERSION }}^)..${{ env.VERSION }})
-            EOF
+          tee --append "$GITHUB_OUTPUT" << ENDBODY
+          CHANGELOG<<EOF
+          $(git log --pretty=tformat:"- %s" $(git describe --tags --abbrev=0 ${{ env.VERSION }}^)..${{ env.VERSION }})
+          EOF
           ENDBODY
 
       - name: Create Release Draft
