@@ -19,7 +19,7 @@ jobs:
       contents: write
     steps:
       - name: Extract version
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" | tee --append "$GITHUB_ENV"
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" | tee --append "$GITHUB_ENV"
       # This is necessary for generating the changelog. It has to come before "Download Artifacts" or else it deletes the artifacts.
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -34,7 +34,7 @@ jobs:
         run: |
           tee --append "$GITHUB_OUTPUT" << ENDBODY
           CHANGELOG<<EOF
-          $(git log --pretty=tformat:"- %s" $(git describe --tags --abbrev=0 ${RELEASE_VERSION}^)..${RELEASE_VERSION})
+          $(git log --pretty=tformat:"- %s" $(git describe --tags --abbrev=0 ${TAG_NAME}^)..${TAG_NAME})
           EOF
           ENDBODY
 
@@ -45,8 +45,7 @@ jobs:
 
         # The formatting here is borrowed from OpenEthereum: https://github.com/openethereum/openethereum/blob/main/.github/workflows/build.yml
         run: |
-          tag_name="${RELEASE_VERSION}"
-          gh release create --verify-tag --draft --notes-file - "$tag_name" << "ENDBODY"
+          gh release create --verify-tag --draft --notes-file - "$TAG_NAME" << "ENDBODY"
           <Release Name, Version and Time>
 
           ## Summary
