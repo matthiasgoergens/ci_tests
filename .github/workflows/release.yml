@@ -56,14 +56,14 @@ jobs:
         # The formatting here is borrowed from OpenEthereum: https://github.com/openethereum/openethereum/blob/main/.github/workflows/build.yml
         run: |
           tag_name="${{ env.VERSION }}"
-          gh release create --draft --notes-file - "$tag_name" <<- "ENDBODY"
-            <Release Name, Version and Time>
+          gh release create --draft --notes-file - "$tag_name" << "ENDBODY"
+          <Release Name, Version and Time>
 
-            ## Summary
+          ## Summary
 
-            Add a summary.
+          Add a summary.
 
-            ## All Changes
+          ## All Changes
 
-            ${{ steps.changelog.outputs.CHANGELOG }}
+          ${{ steps.changelog.outputs.CHANGELOG }}
           ENDBODY
