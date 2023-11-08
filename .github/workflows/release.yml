@@ -43,7 +43,7 @@ jobs:
         id: changelog
         run: |
           echo "CHANGELOG<<EOF" | tee --append $GITHUB_OUTPUT
-          git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 ${{ env.VERSION }}^)..${{ env.VERSION }} | tee --append $GITHUB_OUTPUT
+          git log --pretty=tformat:"- %s" $(git describe --tags --abbrev=0 ${{ env.VERSION }}^)..${{ env.VERSION }} | tee --append $GITHUB_OUTPUT
           echo "EOF" | tee --append $GITHUB_OUTPUT
 
       - name: Create Release Draft
