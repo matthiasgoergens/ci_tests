@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Extract version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" | tee --append $GITHUB_OUTPUT
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" | tee --append "$GITHUB_OUTPUT"
         id: extract_version
     outputs:
       VERSION: ${{ steps.extract_version.outputs.VERSION }}
@@ -42,9 +42,11 @@ jobs:
       - name: Generate full changelog
         id: changelog
         run: |
-          echo "CHANGELOG<<EOF" | tee --append $GITHUB_OUTPUT
-          git log --pretty=tformat:"- %s" $(git describe --tags --abbrev=0 ${{ env.VERSION }}^)..${{ env.VERSION }} | tee --append $GITHUB_OUTPUT
-          echo "EOF" | tee --append $GITHUB_OUTPUT
+          {
+            echo "CHANGELOG<<EOF"
+            git log --pretty=tformat:"- %s" $(git describe --tags --abbrev=0 ${{ env.VERSION }}^)..${{ env.VERSION }}
+            echo EOF
+          } | tee --append "$GITHUB_OUTPUT"
 
       - name: Create Release Draft
         env:
@@ -53,7 +55,8 @@ jobs:
 
         # The formatting here is borrowed from OpenEthereum: https://github.com/openethereum/openethereum/blob/main/.github/workflows/build.yml
         run: |
-          body=$(cat <<- "ENDBODY"
+          tag_name="${{ env.VERSION }}"
+          gh release create --draft --notes-file - "$tag_name" <<- "ENDBODY"
           <Release Name, Version and Time>
 
           ## Summary
@@ -64,6 +67,3 @@ jobs:
 
           ${{ steps.changelog.outputs.CHANGELOG }}
           ENDBODY
-          )
-          tag_name="${{ env.VERSION }}"
-          echo "$body" | gh release create --draft -F "-" "$tag_name"
